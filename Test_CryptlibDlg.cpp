@@ -117,12 +117,19 @@ BOOL CTestCryptlibDlg::OnInitDialog()
 	memset(key, 0x00, CryptoPP::AES::DEFAULT_KEYLENGTH);
 	memset(iv, 0x00, CryptoPP::AES::BLOCKSIZE);
 
-	std::string plaintext = "on;https://dev-admin.linkmemine.com;443;apple;AAaa1234!!";
+	memcpy(&key, "Koino1807!LmmPRJ", CryptoPP::AES::DEFAULT_KEYLENGTH);
+	memcpy(&iv, "Koino7081!LmmPRJ", CryptoPP::AES::BLOCKSIZE);
+
+
+	//src
+	//std::string plaintext = "on;https://dev-admin.linkmemine.com;443;apple;1234;0;0";
+	std::string plaintext = "off;https://ss.linkmemine.com;443;apple@linkmemine.com;us+h*&/263a7/+==";
 	std::string ciphertext;
 	std::string decryptedtext;
 
 	Trace_only(_T("plaintext text: %s\n"), CString(plaintext.c_str()));
 
+	//AES 암호화
 	CryptoPP::AES::Encryption aesEncryption(key, CryptoPP::AES::DEFAULT_KEYLENGTH);
 	CryptoPP::CBC_Mode_ExternalCipher::Encryption cbcEncryption(aesEncryption, iv);
 
@@ -139,13 +146,18 @@ BOOL CTestCryptlibDlg::OnInitDialog()
 
 	Trace_only(_T("\n"));
 
-	std::string base64_encoded = base64_encode(ciphertext);
+	//base64 encode url
+	std::string base64_encoded = base64_encode_url(ciphertext);
 	Trace_only(_T("base64_encoded Text: %s\n"), CString(base64_encoded.c_str()));
 
+	//for test decrypt
+	//base64_encoded = "pwAPVFosC42FCLZeij9yAxtm4t0PUW8aIRbfsa5-6ATbCsj5eRZdB1A9a7d5rOXF2PYcSCoRBWoQWBnaKiwq_g";
 
-	std::string base64_decoded = base64_decode(base64_encoded);
+	//base64 decode url
+	std::string base64_decoded = base64_decode_url(base64_encoded);
 	Trace_only(_T("base64_decoded Text: %s\n"), CString(base64_decoded.c_str()));
 
+	//AES 복호화
 	CryptoPP::AES::Decryption aesDecryption(key, CryptoPP::AES::DEFAULT_KEYLENGTH);
 	CryptoPP::CBC_Mode_ExternalCipher::Decryption cbcDecryption(aesDecryption, iv);
 
